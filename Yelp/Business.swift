@@ -17,6 +17,12 @@ class Business: NSObject {
     let distance: String?
     let ratingImageURL: NSURL?
     let reviewCount: NSNumber?
+    let rating: NSNumber?
+    let displayPhone: NSString?
+    let crossStreets: NSString?
+    let neighborhood: NSString?
+    let walkTime: String?
+    
     var coordinate: CLLocationCoordinate2D? // @todo: make this a "let" but fix init...
     
     init(dictionary: NSDictionary) {
@@ -43,8 +49,18 @@ class Business: NSObject {
                 if !address.isEmpty {
                     address += ", "
                 }
+                neighborhood = neighborhoods![0] as? NSString
                 address += neighborhoods![0] as! String
             }
+            else {
+                neighborhood = nil
+            }
+            crossStreets = location!["cross_streets"] as? NSString
+        }
+        else {
+            // TODO: clean this up
+            crossStreets = nil
+            neighborhood = nil
         }
         self.address = address
         
@@ -72,8 +88,21 @@ class Business: NSObject {
         if distanceMeters != nil {
             let milesPerMeter = 0.000621371
             distance = String(format: "%.2f mi", milesPerMeter * distanceMeters!.doubleValue)
+            let kmh = 5.0
+            let kmm = kmh / 60.0
+            let metersPerMinute = kmm * 1000.0
+            let totalMinutes = Int(ceil(distanceMeters!.doubleValue / metersPerMinute))
+            let hours = totalMinutes / 60
+            if hours > 0 {
+                let remainderMinutes = totalMinutes % 60
+                walkTime = String(format: "%d hours, %d minutes", hours, remainderMinutes)
+            }
+            else {
+                walkTime = String(format: "%d minutes", totalMinutes)
+            }
         } else {
             distance = nil
+            walkTime = nil
         }
         
         let ratingImageURLString = dictionary["rating_img_url_large"] as? String
@@ -83,6 +112,8 @@ class Business: NSObject {
             ratingImageURL = nil
         }
         
+        displayPhone = dictionary["display_phone"] as? NSString
+        rating = dictionary["rating"] as? NSNumber
         reviewCount = dictionary["review_count"] as? NSNumber
     }
     
