@@ -14,7 +14,7 @@ class Business: NSObject {
     let address: String?
     let imageURL: NSURL?
     let categories: String?
-    let distance: String?
+    var distance: String?
     let ratingImageURL: NSURL?
     let reviewCount: NSNumber?
     let rating: NSNumber?
@@ -22,6 +22,7 @@ class Business: NSObject {
     let crossStreets: NSString?
     let neighborhood: NSString?
     let walkTime: String?
+    let businessId: String?
     
     var coordinate: CLLocationCoordinate2D? // @todo: make this a "let" but fix init...
     
@@ -112,6 +113,7 @@ class Business: NSObject {
             ratingImageURL = nil
         }
         
+        businessId = dictionary["id"] as? String
         displayPhone = dictionary["display_phone"] as? NSString
         rating = dictionary["rating"] as? NSNumber
         reviewCount = dictionary["review_count"] as? NSNumber
