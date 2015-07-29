@@ -127,12 +127,21 @@ class Business: NSObject {
         }
         return businesses
     }
+
+    class func yelpBusinessesFromJSON(#array: [NSDictionary]) -> [YelpBusinessPO] {
+        var result = [YelpBusinessPO]()
+        for dictionary in array {
+            var business = YelpBusinessPO(dictionary: dictionary)
+            result.append(business)
+        }
+        return result
+    }
     
-    class func searchWithTerm(term: String, completion: ([Business]!, NSError!) -> Void) {
+    class func searchWithTerm(term: String, completion: ([YelpBusinessPO]!, NSError!) -> Void) {
         YelpClient.sharedInstance.searchWithTerm(term, completion: completion)
     }
     
-    class func searchWithTerm(term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: ([Business]!, NSError!) -> Void) -> Void {
+    class func searchWithTerm(term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: ([YelpBusinessPO]!, NSError!) -> Void) -> Void {
         YelpClient.sharedInstance.searchWithTerm(term, sort: sort, categories: categories, deals: deals, completion: completion)
     }
 }
