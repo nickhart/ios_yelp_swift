@@ -36,17 +36,17 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         return Static.instance!
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     init(consumerKey key: String!, consumerSecret secret: String!, accessToken: String!, accessSecret: String!) {
         self.accessToken = accessToken
         self.accessSecret = accessSecret
-        var baseUrl = NSURL(string: "http://api.yelp.com/v2/")
+        let baseUrl = NSURL(string: "https://api.yelp.com/v2/")
         super.init(baseURL: baseUrl, consumerKey: key, consumerSecret: secret);
         
-        var token = BDBOAuth1Credential(token: accessToken, secret: accessSecret, expiration: nil)
+        let token = BDBOAuth1Credential(token: accessToken, secret: accessSecret, expiration: nil)
         self.requestSerializer.saveAccessToken(token)
         self.defaultLocation = "37.785771,-122.406165"
     }
@@ -66,17 +66,17 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         }
         
         if categories != nil && categories!.count > 0 {
-            parameters["category_filter"] = ",".join(categories!)
+            parameters["category_filter"] = categories?.joinWithSeparator(",")
         }
         
         if deals != nil {
             parameters["deals_filter"] = deals!
         }
         
-        println(parameters)
+        print(parameters)
         
         return self.GET("search", parameters: parameters, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            var dictionaries = response["businesses"] as? [NSDictionary]
+            let dictionaries = response["businesses"] as? [NSDictionary]
             if dictionaries != nil {
                 completion(YelpBusinessPO.yelpBusinessesFromJSON(array: dictionaries!), nil)
             }
@@ -89,7 +89,7 @@ class YelpClient: BDBOAuth1RequestOperationManager {
 //        var parameters: [String : AnyObject] = []
         let path = "business/\(businessId)"
         return self.GET(path, parameters: nil, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            var dictionary = response as? NSDictionary
+            let dictionary = response as? NSDictionary
             if dictionary != nil {
                 completion(YelpBusinessPO(dictionary: dictionary!), nil)
             }
